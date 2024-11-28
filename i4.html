@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Surveillance and Security System</title>
+    <link rel="stylesheet" href="st.css">
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <h1>AI Surveillance and Security System</h1>
+        <div>
+            <a href="home.html"><button disabled>Home</button></a>
+            <button id="featuresButton">Features</button>
+            <button id="faqButton">FAQ</button>
+            <button onclick="scrollToSection('webcam')">Webcam</button>
+            <a href="contact1.html"><button>Contact us</button></a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Home Section (Full Page) -->
+        <section id="home" class="section full-page">
+            <h2>Welcome to the AI Surveillance and Security System</h2>
+            <p>Your trusted partner for monitoring and securing sensitive zones with advanced AI technology.</p>
+        </section>
+
+        <!-- Webcam Section -->
+        <section id="webcam" class="section">
+            <h2>Webcam Feed</h2>
+            <video id="videoFeed" autoplay muted></video>
+            <div>
+                <button id="startWebcamButton">Start Webcam</button>
+                <button id="stopWebcamButton">Stop Webcam</button>
+            </div>
+        </section>
+
+        <!-- Incident Alerts Section -->
+        <section id="alerts" class="section">
+            <h2>Incident Alerts</h2>
+            <ul id="alertsList">
+                <!-- Alerts will be dynamically added here -->
+            </ul>
+        </section>
+
+        <!-- Audio Sensor Section -->
+        <section id="audioSensor" class="section">
+            <h2>Audio Sensor</h2>
+            <button id="startAudioButton">Start Audio Sensor</button>
+            <button id="stopAudioButton">Stop Audio Sensor</button>
+            <p id="audioStatus">Audio sensor status: Not active</p>
+            <p id="audioLevel">Current Audio Level: 0 dB</p>
+        </section>
+
+        <!-- Alarm Sensor Section -->
+        <section id="alarmSensor" class="section">
+            <h2>Alarm Sensor</h2>
+            <p id="alarmStatus">Alarm status: No alarm detected</p>
+            <div id="alarmNotification" style="display: none; color: red; font-size: 20px; font-weight: bold;">ALARM DETECTED!</div>
+        </section>
+
+        <!-- Features Section (Hidden by default) -->
+        <section id="features" class="section" style="display: none;">
+            <h2>System Features</h2>
+            <ul>
+                <li><strong>Real-Time Video Surveillance</strong>: Monitors sensitive areas using live webcam feeds for security purposes.</li>
+                <li><strong>Audio Detection</strong>: Detects unusual noise patterns and triggers alarms if the noise level exceeds predefined thresholds.</li>
+                <li><strong>Environmental Sensors</strong>: Monitors changes in the environment (e.g., temperature, humidity) that could indicate suspicious activity.</li>
+                <li><strong>Automated Alerts</strong>: Sends instant notifications for detected anomalies, ensuring quick response times to security threats.</li>
+                <li><strong>Multi-Modal Anomaly Detection</strong>: Combines video, audio, and environmental data to identify potential threats with higher accuracy.</li>
+                <li><strong>Secure Remote Access</strong>: Enables authorized personnel to view surveillance feeds and alerts from anywhere at any time.</li>
+            </ul>
+        </section>
+
+        <!-- FAQ Section (Hidden by default) -->
+        <section id="faq" class="section" style="display: none;">
+            <h2>Frequently Asked Questions</h2>
+            <dl>
+                <dt><strong>What is the purpose of the surveillance system?</strong></dt>
+                <dd>The system is designed to monitor restricted areas for any suspicious activities, providing enhanced security and peace of mind.</dd>
+
+                <dt><strong>How does the audio sensor work?</strong></dt>
+                <dd>The audio sensor detects sound levels in the environment, such as sudden loud noises or conversations that may indicate unauthorized activity.</dd>
+
+                <dt><strong>What happens if an alarm is triggered?</strong></dt>
+                <dd>If an alarm is triggered, an alert is sent to the security personnel, who can take immediate action to assess and resolve the situation.</dd>
+
+                <dt><strong>Can I view the footage remotely?</strong></dt>
+                <dd>Yes, the system supports secure remote access, allowing you to monitor live video feeds and receive alerts from anywhere.</dd>
+
+                <dt><strong>How secure is the system?</strong></dt>
+                <dd>The system uses strong encryption and multi-factor authentication to ensure that only authorized users can access sensitive data and video feeds.</dd>
+
+                <dt><strong>How are incidents detected?</strong></dt>
+                <dd>Incidents are detected using advanced algorithms that analyze video, audio, and environmental data to spot anomalies in real-time.</dd>
+
+                <dt><strong>Can the system differentiate between normal and abnormal activities?</strong></dt>
+                <dd>Yes, the system uses AI and machine learning algorithms to identify patterns and distinguish between normal and suspicious behaviors based on the sensor data.</dd>
+            </dl>
+        </section>
+
+        <!-- Chatbot Section -->
+        <section id="chatbot" class="section">
+            <h2>Chatbot</h2>
+            <div class="chat-window" id="chatWindow"></div>
+            <input type="text" id="chatInput" placeholder="Type your message..." />
+            <button id="sendButton">Send</button>
+        </section>
+    </main>
+
+    <script>
+        // Webcam Functionality
+        const videoFeed = document.getElementById('videoFeed');
+        const startWebcamButton = document.getElementById('startWebcamButton');
+        const stopWebcamButton = document.getElementById('stopWebcamButton');
+        const alertsList = document.getElementById('alertsList');
+
+        startWebcamButton.addEventListener('click', function() {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function(stream) {
+                    videoFeed.srcObject = stream;
+                    videoFeed.play();
+                    addAlert("Webcam started.", "info");
+                })
+                .catch(function(error) {
+                    console.error("Error accessing webcam:", error);
+                    addAlert("Error accessing webcam!", "error");
+                });
+        });
+
+        stopWebcamButton.addEventListener('click', function() {
+            const stream = videoFeed.srcObject;
+            const tracks = stream.getTracks();
+            tracks.forEach(track => track.stop());
+            videoFeed.srcObject = null;
+            addAlert("Webcam stopped.", "info");
+        });
+
+        function addAlert(message, type) {
+            const alertItem = document.createElement('li');
+            alertItem.textContent = message;
+            if (type === "info") alertItem.style.color = 'blue';
+            if (type === "alert") alertItem.style.color = 'red';
+            if (type === "error") alertItem.style.color = 'darkred';
+            alertsList.appendChild(alertItem);
+            setTimeout(() => alertItem.remove(), 5000);
+        }
+
+        // Audio Sensor Functionality
+        const startAudioButton = document.getElementById('startAudioButton');
+        const stopAudioButton = document.getElementById('stopAudioButton');
+        const audioStatus = document.getElementById('audioStatus');
+        const audioLevel = document.getElementById('audioLevel');
+
+        let audioContext;
+        let analyser;
+        let microphone;
+        let isAudioActive = false;
+        const alarmThreshold = 80; 
+
+        startAudioButton.addEventListener('click', startAudioSensor);
+        stopAudioButton.addEventListener('click', stopAudioSensor);
+
+        function startAudioSensor() {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                alert("Audio sensor not supported on your browser.");
+                return;
+            }
+
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    analyser = audioContext.createAnalyser();
+                    microphone = audioContext.createMediaStreamSource(stream);
+                    microphone.connect(analyser);
+                    analyser.fftSize = 256;
+
+                    audioStatus.textContent = "Audio sensor status: Active";
+                    isAudioActive = true;
+                    monitorAudioLevel();
+                    addAlert("Audio sensor activated.", "info");
+                })
+                .catch(error => {
+                    console.error("Error accessing audio:", error);
+                    addAlert("Error accessing audio sensor!", "error");
+                });
+        }
+
+        function stopAudioSensor() {
+            if (audioContext) {
+                audioContext.close();
+                audioContext = null;
+            }
+            audioStatus.textContent = "Audio sensor status: Not active";
+            isAudioActive = false;
+            addAlert("Audio sensor stopped.", "info");
+        }
+
+        function monitorAudioLevel() {
+            if (!isAudioActive) return;
+
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+
+            analyser.getByteFrequencyData(dataArray);
+
+            let sum = 0;
+            dataArray.forEach(value => sum += value);
+            const average = sum / bufferLength;
+            const decibels = average > 0 ? Math.log10(average) * 20 : 0;
+
+            audioLevel.textContent = `Current Audio Level: ${decibels.toFixed(2)} dB`;
+
+            if (decibels > alarmThreshold) {
+                addAlert("Loud noise detected, alarm triggered.", "alert");
+            }
+
+            requestAnimationFrame(monitorAudioLevel);
+        }
+
+        // Chatbot Functionality
+        const chatWindow = document.getElementById('chatWindow');
+        const chatInput = document.getElementById('chatInput');
+        const sendButton = document.getElementById('sendButton');
+
+        const responses = {
+            "hello": "Hello! How can I assist you today?",
+            "webcam": "The webcam feed is live and operational.",
+            "audio": "The audio sensor detects sound levels in the environment. It can trigger an alarm if the noise exceeds the threshold.",
+            "alarm": "The alarm sensor will trigger if abnormal activity or loud sounds are detected.",
+            "features": "This system has features like Real-Time Video Surveillance, Audio Detection, and Environmental Sensors.",
+            "faq": "Please check our FAQ section for common questions about the system.",
+            "default": "I'm sorry, I didn't understand that. Can you please rephrase?"
+        };
+
+        sendButton.addEventListener('click', function() {
+            const userMessage = chatInput.value.trim();
+            
+            if (userMessage) {
+                displayMessage("You: " + userMessage, 'user');
+                chatInput.value = ''; 
+
+                const response = getChatbotResponse(userMessage.toLowerCase());
+                displayMessage("Bot: " + response, 'bot');
+            }
+        });
+
+        function getChatbotResponse(userMessage) {
+            return responses[userMessage] || responses["default"];
+        }
+
+        function displayMessage(message, sender) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add(sender);
+            messageElement.textContent = message;
+            chatWindow.appendChild(messageElement);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        // Features and FAQ Button Click Handling
+        document.getElementById('featuresButton').addEventListener('click', function() {
+            document.getElementById('features').style.display = 'block';
+            document.getElementById('faq').style.display = 'none';
+        });
+
+        document.getElementById('faqButton').addEventListener('click', function() {
+            document.getElementById('faq').style.display = 'block';
+            document.getElementById('features').style.display = 'none';
+        });
+
+        // Scroll to Section
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+
+</body>
+</html>

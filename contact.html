@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact us</title>
+    <link rel="stylesheet" href="st.css">
+</head>
+<body>
+
+   
+<section id="contact" class="section">
+    <h2>Contact Us</h2>
+    <p>If you have any questions or concerns, feel free to reach out to us. We're here to help!</p>
+    
+    <form id="contactForm" method="POST" action="/submitContactForm">
+        <div class="form-group">
+            <label for="name">Your Name</label>
+            <input type="text" id="name" name="name" placeholder="Your Name" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="email">Your Email</label>
+            <input type="email" id="email" name="email" placeholder="Your Email" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="subject">Subject</label>
+            <input type="text" id="subject" name="subject" placeholder="Subject" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" rows="4" placeholder="Your message" required></textarea>
+        </div>
+        
+        <button type="submit">Send Message</button>
+    </form>
+</section>
+
+<script>
+    // Handling form submission with Fetch API
+    const contactForm = document.getElementById('contactForm');
+    
+    contactForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const formData = new FormData(contactForm);
+        const formObject = {};
+        formData.forEach((value, key) => formObject[key] = value);
+
+        const response = await fetch('/submitContactForm', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formObject),
+        });
+
+        const result = await response.json();
+        
+        if (response.ok) {
+            alert('Your message has been sent successfully!');
+        } else {
+            alert('There was an issue sending your message. Please try again.');
+        }
+    });
+</script>
+</body>
+</html>
